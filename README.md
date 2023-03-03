@@ -1,3 +1,3 @@
 # UoM_MapReduce-vs-Spark
 
-Hadoop is used for storing and processing a huge amount of data, for storing it uses HDFS (Hadoop Distributed File System) and for processing its uses MapReduce. For analysing hive can be used which uses hiveQL statement which runs over MapReduce framework to analyse the data. And also, analysis can be done by using spark which uses Spark-SQL and runs over spark framework. Query execution time comparison is analysed for the delayed flight dataset freely available on Kaggle.
+Hadoop is a widely used tool for managing large amounts of data, where it utilizes the HDFS for storing data and MapReduce for processing it. For data analysis, there are multiple options available such as Hive, which uses HiveQL statements that run on the MapReduce framework, and Spark, which utilizes Spark-SQL and runs on the Spark framework. To compare query execution times, one can use freely available datasets like the Delayed Flight dataset on Kaggle.
