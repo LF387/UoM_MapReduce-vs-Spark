@@ -1,0 +1,51 @@
+CREATE EXTERNAL TABLE table3 (
+  Id INT,
+  Year INT,
+  Month INT,
+  DayofMonth INT,
+  DayOfWeek INT,
+  DepTime FLOAT,
+  CRSDepTime INT,
+  ArrTime FLOAT,
+  CRSArrTime INT,
+  UniqueCarrier STRING,
+  FlightNum INT,
+  TailNum STRING,
+  ActualElapsedTime FLOAT,
+  CRSElapsedTime FLOAT,
+  AirTime FLOAT,
+  ArrDelay FLOAT,
+  DepDelay FLOAT,
+  Origin STRING,
+  Dest STRING,
+  Distance FLOAT,
+  TaxiIn FLOAT,
+  TaxiOut FLOAT,
+  Cancelled STRING,
+  CancellationCode STRING,
+  Diverted STRING,
+  CarrierDelay FLOAT,
+  WeatherDelay FLOAT,
+  NASDelay FLOAT,
+  SecurityDelay FLOAT,
+  LateAircraftDelay FLOAT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION 's3://flight-delay-wip/input/';
+
+exit;
+
+sudo /usr/lib/spark/sbin/start-thriftserver.sh;
+sudo /usr/lib/spark/bin/beeline;
+!connect jdbc:hive2://localhost:10001 -n hadoop;
+
+SELECT Year, avg((CarrierDelay /ArrDelay)*100) FROM table3 GROUP BY Year;
+
+SELECT Year, avg((NASDelay /ArrDelay)*100) FROM table3 GROUP BY Year;
+
+SELECT Year, avg((WeatherDelay /ArrDelay)*100) FROM table3 GROUP BY Year;
+
+SELECT Year, avg((LateAircraftDelay /ArrDelay)*100) FROM table3 GROUP BY Year;
+
+SELECT Year, avg((SecurityDelay /ArrDelay)*100) FROM table3 GROUP BY Year;
