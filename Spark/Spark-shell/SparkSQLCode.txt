@@ -1,0 +1,48 @@
+
+spark-shell --conf spark.sql.execution.time=true
+
+scala>
+
+val  df= spark.read.format("csv").load("s3://flight-delay-wip/input/DelayedFlights-updated.csv")
+
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.types.{StructType, StructField, StringType, IntegerType, DoubleType}
+
+
+val schema = new StructType().add("Id", IntegerType, true).add("Year", IntegerType, true).add("Month", IntegerType, true).add("DayofMonth", IntegerType, true).add("DayOfWeek", IntegerType, true).add("DepTime", DoubleType, true).add("CRSDepTime", IntegerType, true).add("ArrTime", DoubleType, true).add("CRSArrTime", IntegerType, true).add("UniqueCarrier", StringType, true).add("FlightNum", IntegerType, true).add("TailNum", StringType, true).add("ActualElapsedTime", DoubleType, true).add("CRSElapsedTime", DoubleType, true).add("AirTime", DoubleType, true).add("ArrDelay", DoubleType, true).add("DepDelay", DoubleType, true).add("Origin", StringType, true).add("Dest", StringType, true).add("Distance", IntegerType, true).add("TaxiIn", DoubleType, true).add("TaxiOut", DoubleType, true).add("Cancelled", IntegerType, true).add("CancellationCode", StringType, true).add("Diverted", IntegerType, true).add("CarrierDelay", DoubleType, true).add("WeatherDelay", DoubleType, true).add("NASDelay", DoubleType, true).add("SecurityDelay", DoubleType, true).add("LateAircraftDelay", DoubleType, true)
+
+
+val  df2= spark.read.format("csv").schema(schema).load("s3://flight-delay-wip/input/DelayedFlights-updated.csv")
+
+
+df2.write.format("parquet").partitionBy("Year").save("s3://flight-delay-wip/delays-df")
+
+
+val  df3= spark.read.format("parquet").load("s3://flight-delay-wip/delays-df")
+
+
+df3.createOrReplaceTempView("delays")
+
+
+val q =spark.sql("SELECT Year, avg((CarrierDelay /ArrDelay)*100) FROM delays GROUP BY Year")
+
+
+import spark.time
+
+spark.time(q.show())
+
+val q2 =spark.sql("SELECT Year, avg((NASDelay /ArrDelay)*100) FROM delays GROUP BY Year")
+
+spark.time(q2.show())
+
+val q3 =spark.sql("SELECT Year, avg((WeatherDelay /ArrDelay)*100) FROM delays GROUP BY Year")
+
+spark.time(q3.show())
+
+val q4 =spark.sql("SELECT Year, avg((LateAircraftDelay /ArrDelay)*100) FROM delays GROUP BY Year")
+
+spark.time(q4.show())
+
+val q5 =spark.sql("SELECT Year, avg((SecurityDelay /ArrDelay)*100) FROM delays GROUP BY Year")
+
+spark.time(q5.show())

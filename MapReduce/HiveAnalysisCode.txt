@@ -1,4 +1,5 @@
-
+If your file is stored in CSV format in the S3 bucket, you can use the following HiveQL commands to create an external table and read the data in hive:
+"s3://flight-delay-wip/input/" is the actual path to your CSV file in S3.
 
 CREATE EXTERNAL TABLE table3 (
   Id INT,
@@ -36,10 +37,19 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 LOCATION 's3://flight-delay-wip/input/';
 
+To disable the default behavior of Hive to validate the partition directories in the table. This is useful when the partitions have been added manually or through a different process.
+
 set hive.msck.path.validation=ignore;
+
+To repair the table by adding any partitions that are missing. This command is useful when partitions have been added manually to the storage location outside of Hive.
+
 MSCK REPAIR TABLE table3;
 
+To provide metadata information about the table including its schema, partition information, table location, storage format, and more.
+
 describe formatted table3;
+
+
 
 SELECT Year, avg((CarrierDelay /ArrDelay)*100) FROM table3 GROUP BY Year;
 
